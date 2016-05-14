@@ -1,0 +1,97 @@
+body,p,h1,h2,h3,h4,h5,h6,ul,li{
+	margin: 0;
+	padding: 0;
+}
+
+
+
+ul,li{
+	list-style: none;
+}
+
+*,*::before,*::after{
+	box-sizing: border-box;
+}
+
+a{
+	.main-txt;
+	text-decoration: none;
+	transition: all .2s;
+	-webkit-tap-highlight-color:transparent;
+}
+
+a:hover{
+	color: @aHovered;
+	cursor: pointer;
+	-webkit-tap-highlight-color:transparent;
+}
+.actived{
+	color: @aHovered;
+	background-color: darken(#fff,10%);
+}
+
+h1{
+	font-size: @firstSize;
+	color: @firstColor;
+}
+h2{
+	font-size: @secondSize;
+	color: @secondColor;
+}
+h3{
+	font-size: @thirdSize;
+	color: @thirdColor;
+}
+h4{
+	font-size: @thirdSize;
+	color: @forthColor;
+}
+h5{
+	font-size: @thirdSize;
+	color: @fivthColor;
+}
+h6{
+	font-size: @forthSize;
+	color: @sixthColor;
+}
+
+pre{
+	display: inline-block;
+	background-color: #272822;
+	color: @aHovered;
+	font-family: 'Consolas', Monospace;
+	padding: 8px;
+	margin: 2px;
+	font-size: @secondSize;
+	border-radius: 2px;
+}
+code{
+	font-family: 'Consolas', Monospace;
+	font-size: @secondSize;
+}
+blockquote{
+	display: inline-block;
+	background-color: lighten(@sixthColor,20%);
+	border-radius: 2px;
+	padding: 8px;
+	color: @secondColor;
+	font-size: @secondSize;
+	border-left: 5px solid @aHovered;
+	margin: 3px 5px;
+} 
+input,textarea{
+	vertical-align: middle;
+	outline: none;
+	padding: 5px 8px;
+	border: 1px solid @forthColor;
+	border-radius: 2px;
+	transition: all .2s;
+	.main-txt;
+}
+input:focus,textarea:focus{
+	border-color: @aHovered;
+}
+textarea{
+	vertical-align: top;
+	resize: vertical;
+}

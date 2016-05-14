@@ -1,0 +1,11 @@
+mixin navi(listIndex)
+	nav.nav
+		ul.nav-ul
+			-var listName = {'首页':'/','编辑':'/edit','关于':'/about','more':'/more'};
+			each val,index in listName
+				if (index===listIndex)
+					li.nav-items
+						a(href="#{val}").actived #{index}
+				else
+					li.nav-items
+						a(href="#{val}") #{index}

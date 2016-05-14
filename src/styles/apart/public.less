@@ -1,0 +1,68 @@
+body{
+	color: @firstColor;
+	font-family: 'sans-serif';
+	background-color: darken(#fff,10%);
+}
+
+.hover-scale{
+	transition: all .2s;
+}
+.hover-scale:hover,.hover-scale:active{
+	transform: scale(1.02);
+	z-index: 1;
+}
+
+.nav{
+	box-shadow: @shdwCls2;
+	background-color: #fff;
+	position: fixed;
+	width: 100%;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	.nav-ul{
+		overflow: auto;
+		max-width: 360px;
+		.nav-items{
+			display: block;
+			float: left;
+			width: 25%;
+			text-align: center;
+			.actived{
+				color: @aHovered;
+				background-color: darken(#fff,10%);
+			}
+			a{
+				.em-txt;
+				display: block;
+				padding: 8px;
+			}
+			a:hover{
+				color: @aHovered;
+				background-color: darken(#fff,10%);
+			}
+		}
+	}
+}
+
+.as-btn,button{
+	display: inline-block;
+	padding: 8px 12px;
+	text-align: center;
+	background-color: @aHovered;
+	color: #fff;
+	user-select: none;
+	border-radius: 2px;
+	vertical-align: middle;
+	transition: all .2s;
+	box-shadow: @shdwCls1;
+	border: none;
+}
+.as-btn:hover,.as-btn:active,button{
+	background-color: lighten(@aHovered,20%)
+}
+
+.as-btn[disabled],button[disabled]{
+	background-color: lighten(@forthColor,28%);
+	color: @forthColor;
+}

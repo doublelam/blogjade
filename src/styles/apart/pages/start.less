@@ -1,0 +1,37 @@
+.main{
+	.master-body{
+		.articles-preview{
+			.article-display{
+				.article-content{
+					border-radius: 2px;
+					box-shadow: @shdwCls1;
+					background-color: #fff;
+					display: flex;
+					align-items: center;
+					padding: 10px 12px;
+					margin-bottom: 10px;
+					.image-container{
+						position: relative;
+						width: 100px;
+						height: 61.8px;
+						overflow: hidden;
+						img{
+							width: 100%;
+							position: absolute;
+							left: 0;
+							top: 50%;
+							transform: translateY(-50%);
+							vertical-align: middle;
+						}	
+					}
+					.article-view{
+						padding: 0 10px;
+						.article-title{
+							margin-bottom: 5px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
