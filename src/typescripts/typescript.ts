@@ -35,7 +35,7 @@ class ExcutePages{
 			var trsTime: Date;
 			var trsCoverPic: string;
 			var trsContent: string;
-			var data:Object;
+			var data: Object;
 			$('.button-block .as-btn').on('click',function(){
 				$(this).prop('disabled',true);
 				origTitle = $('.origin-title .edit-input').val();
