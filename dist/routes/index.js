@@ -63,6 +63,9 @@ var routes = function(app){
 	app.get('/edit',function(req, res, next){
 		res.render('edit',{title:'edit'});
 	});
+	app.get('/about',function(req, res, next){
+		res.render('about',{title:'about'})
+	});
 	
 	/* post editupload */
 	app.post('/editupload',function(req, res, next){

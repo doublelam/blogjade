@@ -13,7 +13,7 @@ class GlobalMethod{
 let ts = new GlobalMethod();
 
 class ExcutePages{
-	edit(){
+	edit():void{
 		function setBtnDisable():void{
 			$('.edit-input').on('keyup mouseup touchend',function(){
 				console.log(ts.ifValEmpty($('.edit-input')));
@@ -83,8 +83,34 @@ class ExcutePages{
 			})
 		}
 		setBtnDisable()
-		ajaxSbmit()  
-		
+		ajaxSbmit()	
 	}
-}
+	// edit page function
+	
+	about():void{
+		function setTurnto():void{
+			let imgClickCount:number = 0;
+			let timer:number;
+			$('.about-image-container img').on('click',function(){
+				imgClickCount ++;
+				console.log(imgClickCount);
+				let jqthis = $(this);
+				imgClickCount === 3 ? function(){jqthis.trigger('willChange');imgClickCount = 0}() : null;
+			});
+			$('.about-image-container img').on('willChange',function(){
+				console.log('trogger chage');
+				clearTimeout(timer);
+				let jqthis = $(this);
+				jqthis.parent().addClass('avartor-alter'); 
+				function removeAnimate(){
+					jqthis.parent().removeClass('avartor-alter');
+					console.log('remove ani');
+				}
+				timer = setTimeout(removeAnimate, 5100);
+			});
+		}
+		setTurnto();
+	}
+	// about page function
+} 
 let exc = new ExcutePages();

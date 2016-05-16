@@ -1,0 +1,17 @@
+extends layout
+block content
+	include ./includes/navigation.jade
+	+navi('关于')
+	section.main
+		.about-content
+			.about-image-container
+				img(src="images/content/avator.jpg")
+				img(src="images/content/avator.jpg")
+				img(src="images/content/avator.jpg")
+				img(src="images/content/avator.jpg")
+			.about-describe
+	script(src='javascripts/jquery.min.js' type='text/javascript')
+	script(src='javascripts/typescript.min.js' type='text/javascript')
+	script
+		:typescript
+			exc.about();

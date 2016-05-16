@@ -88,6 +88,31 @@ var ExcutePages = (function () {
         setBtnDisable();
         ajaxSbmit();
     };
+    // edit page function
+    ExcutePages.prototype.about = function () {
+        function setTurnto() {
+            var imgClickCount = 0;
+            var timer;
+            $('.about-image-container img').on('click', function () {
+                imgClickCount++;
+                console.log(imgClickCount);
+                var jqthis = $(this);
+                imgClickCount === 3 ? function () { jqthis.trigger('willChange'); imgClickCount = 0; }() : null;
+            });
+            $('.about-image-container img').on('willChange', function () {
+                console.log('trogger chage');
+                clearTimeout(timer);
+                var jqthis = $(this);
+                jqthis.parent().addClass('avartor-alter');
+                function removeAnimate() {
+                    jqthis.parent().removeClass('avartor-alter');
+                    console.log('remove ani');
+                }
+                timer = setTimeout(removeAnimate, 5100);
+            });
+        }
+        setTurnto();
+    };
     return ExcutePages;
 }());
 var exc = new ExcutePages();
