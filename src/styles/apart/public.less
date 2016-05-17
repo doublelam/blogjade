@@ -57,9 +57,17 @@ body{
 	transition: all .2s;
 	box-shadow: @shdwCls1;
 	border: none;
+	outline: none;
 }
-.as-btn:hover,.as-btn:active,button{
+
+.as-btn:hover,.as-btn:active,button:hover,button:active{
 	background-color: lighten(@aHovered,20%)
+}
+.as-btn.btn-warn,button.btn-warn{
+	background-color: @warnColor; 
+}
+.as-btn.btn-warn:hover,.as-btn.btn-warn:active,button.btn-warn:hover,button.btn-warn:active{
+	background-color: lighten(@warnColor,20%);
 }
 
 .as-btn[disabled],button[disabled]{

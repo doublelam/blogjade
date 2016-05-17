@@ -1,0 +1,38 @@
+extends layout
+block content
+	include ./includes/navigation.jade
+	+navi('首页')
+	section.main
+		div.master-body
+			div.article-add
+				button.as-btn 创建
+			ul.articles-preview
+				-
+					var test = result.titles
+				each val,index in test
+					li.article-display 
+						a.article-content
+							div.article-view
+								h1.article-title #{val}
+								p.article-paragraph 
+								|preview: #{result.preVs[index]}...
+							div.manage-btns
+								button.as-btn.btn-edit 编辑
+								button.as-btn.btn-delete.btn-warn 删除
+		aside.aside-area
+			div.aside-inside aside area mabe dor ads
+				:marked
+					# markdown
+						for()
+							console.log()
+						sd
+					codeend
+	script(src="/javascripts/jquery.min.js" type="text/javascript")
+	script(src="/javascripts/typescript.min.js" type="text/javascript")		
+	script
+		
+			
+
+
+
+	

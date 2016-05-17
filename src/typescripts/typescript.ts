@@ -101,7 +101,7 @@ class ExcutePages{
 				console.log('trogger chage');
 				clearTimeout(timer);
 				let jqthis = $(this);
-				jqthis.parent().addClass('avartor-alter'); 
+				jqthis.parent().addClass('avartor-alter');
 				function removeAnimate(){
 					jqthis.parent().removeClass('avartor-alter');
 					console.log('remove ani');
@@ -112,5 +112,5 @@ class ExcutePages{
 		setTurnto();
 	}
 	// about page function
-} 
+}
 let exc = new ExcutePages();

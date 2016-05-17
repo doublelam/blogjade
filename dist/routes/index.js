@@ -63,9 +63,44 @@ var routes = function(app){
 	app.get('/edit',function(req, res, next){
 		res.render('edit',{title:'edit'});
 	});
+	
+	/* GET about page */
 	app.get('/about',function(req, res, next){
 		res.render('about',{title:'about'})
 	});
+	
+	/* GET article manage page */
+	app.get('/article-manage',function(req, res, next){
+		articles.articleModel.find(
+			function(error, result){
+				if(error){
+					console.log('error',error);
+					res.send('error'+error);
+				}else{
+					var titles = new Array();
+					var times = new Array();
+					var preVs = new Array();
+					var oTitles = new Array();
+
+					for(var i = 0;i < result.length;i ++){
+						titles.push(result[i].tTitle?result[i].tTitle:'null');
+						oTitles.push(result[i].oTitle?result[i].oTitle:'null');
+						times.push(result[i].tTime?result[i].tTime:'null');
+						preVs.push(result[i].tContent?result[i].tContent.substring(0,50):'null');
+						console.log(titles);
+					};
+					var newRslt = {
+						titles: titles,
+						oTitles: oTitles,
+						times: times,
+						preVs: preVs,
+					};
+					
+					res.render('articlemanage',{title:'start',result: newRslt});
+				}
+			}
+		);
+	}); 
 	
 	/* post editupload */
 	app.post('/editupload',function(req, res, next){
