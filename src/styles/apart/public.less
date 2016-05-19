@@ -3,7 +3,10 @@ body{
 	font-family: 'sans-serif';
 	background-color: darken(#fff,10%);
 }
-
+::selection{
+	background: @warnColor;
+	color: #fff;
+}
 .hover-scale{
 	transition: all .2s;
 }
@@ -13,6 +16,7 @@ body{
 }
 
 .nav{
+	user-select: none;
 	box-shadow: @shdwCls2;
 	background-color: #fff;
 	position: fixed;
@@ -20,26 +24,71 @@ body{
 	left: 0;
 	top: 0;
 	z-index: 1;
+	.nav-blocks-container{
+		display: flex;
+		align-items: center;
+		margin: auto;
+		max-width: 1170px;
+	}
+	.symbol-icon{
+		user-select: none;
+		cursor: default;
+		flex: 1;
+		width: 30px; 
+		padding: 5px;
+		padding-left: 10px;
+		color: @warnColor;
+		font-weight: bold;
+		font-size: 1.2rem;
+	}
 	.nav-ul{
-		overflow: auto;
+		flex: 2;
 		max-width: 360px;
 		.nav-items{
 			display: block;
 			float: left;
 			width: 25%;
 			text-align: center;
-			.actived{
+			.nav-alink.actived{
 				color: @aHovered;
 				background-color: darken(#fff,10%);
 			}
-			a{
+			a,.nav-alink{
 				.em-txt;
 				display: block;
-				padding: 8px;
+				padding: 8px 5px;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 			a:hover{
 				color: @aHovered;
 				background-color: darken(#fff,10%);
+			}
+	
+		}
+		.more-operate{
+			position: relative; 
+			.fa-ellipsis-v{
+				transition: all .2s;
+			}
+			.more-oprate-items{
+				display: none;
+				width: 25vw;
+				max-width: 120px;
+				position: absolute;
+				background-color: #fff;
+				border-radius: 2px;
+				box-shadow: @shdwCls3;
+				right: 0;
+				top: 90%;
+				overflow: hidden;
+				.more-list{
+					a{
+						display: block;
+						padding: 8px;
+					}
+				}
 			}
 		}
 	}
@@ -61,13 +110,13 @@ body{
 }
 
 .as-btn:hover,.as-btn:active,button:hover,button:active{
-	background-color: lighten(@aHovered,20%)
+	background-color: darken(@aHovered,10%)
 }
 .as-btn.btn-warn,button.btn-warn{
 	background-color: @warnColor; 
 }
 .as-btn.btn-warn:hover,.as-btn.btn-warn:active,button.btn-warn:hover,button.btn-warn:active{
-	background-color: lighten(@warnColor,20%);
+	background-color: darken(@warnColor,10%);
 }
 
 .as-btn[disabled],button[disabled]{

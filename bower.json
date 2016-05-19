@@ -11,7 +11,8 @@
   "homepage": "",
   "dependencies": {
     "jquery": ">=2.1.4",
-    "jquery.d.ts": "*"
+    "jquery.d.ts": "*",
+    "font-awesome": "^4.6.3"
   },
   "devDependencies": {},
   "main": [

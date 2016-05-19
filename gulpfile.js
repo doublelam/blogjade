@@ -53,11 +53,12 @@ var paths = {
         'src/images/**/*.png' 
     ],
     fonts: [
-        /*'components/fontawesome/fonts/fontawesome.otf',
-        'components/fontawesome/fonts/fontawesome-webfont.eot',
-        'components/fontawesome/fonts/fontawesome-webfont.svg',*/
-        'components/fontawesome/fonts/fontawesome-webfont.ttf',
-        'components/fontawesome/fonts/fontawesome-webfont.woff',
+        'components/font-awesome/fonts/FontAwesome.otf',
+        'components/font-awesome/fonts/fontawesome-webfont.eot',
+        'components/font-awesome/fonts/fontawesome-webfont.svg',
+        'components/font-awesome/fonts/fontawesome-webfont.ttf',
+        'components/font-awesome/fonts/fontawesome-webfont.woff',
+        'components/font-awesome/fonts/fontawesome-webfont.woff2',
         'src/fonts/*',
     ],
     lib: [

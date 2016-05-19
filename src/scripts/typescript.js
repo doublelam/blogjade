@@ -13,10 +13,61 @@ var GlobalMethod = (function () {
     return GlobalMethod;
 }());
 var ts = new GlobalMethod();
-var ExcutePages = (function () {
-    function ExcutePages() {
+// global method
+var PublicMethod = (function () {
+    function PublicMethod() {
     }
-    ExcutePages.prototype.edit = function () {
+    PublicMethod.prototype.navSlide = function () {
+        function naviSlide() {
+            var itemsOperate = $('.nav .more-operate .more-oprate-items');
+            var moreIcon = $('.nav .more-operate .fa-ellipsis-v');
+            $('.nav .more-operate .nav-alink').on('mouseenter', function () {
+                itemsOperate.slideDown('fast');
+                console.log(moreIcon);
+                moreIcon.css({
+                    'transform': 'scale(1.5) rotate(90deg)'
+                });
+            });
+            $('.nav .more-operate').on('mouseleave', function () {
+                itemsOperate.slideUp('fast');
+                moreIcon.css({
+                    'transform': 'rotate(0deg)'
+                });
+            });
+        }
+        function logout(jqdom) {
+            jqdom.on('click', function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/logout',
+                    data: { info: 'logout' },
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log('success logout', result);
+                        window.location.href = "/login";
+                    },
+                    error: function (e) {
+                        console.log('logout ajax err', e);
+                    },
+                    complete: function () {
+                        console.log('logout complete');
+                    }
+                });
+            });
+        }
+        naviSlide();
+        logout($('.nav .nav-ul .more-operate .log-out'));
+    };
+    return PublicMethod;
+}());
+var pub = new PublicMethod();
+// public method
+var ExecutePages = (function () {
+    function ExecutePages() {
+    }
+    ExecutePages.prototype.edit = function () {
+        pub.navSlide();
+        // public method
         function setBtnDisable() {
             $('.edit-input').on('keyup mouseup touchend', function () {
                 console.log(ts.ifValEmpty($('.edit-input')));
@@ -89,7 +140,9 @@ var ExcutePages = (function () {
         ajaxSbmit();
     };
     // edit page function
-    ExcutePages.prototype.about = function () {
+    ExecutePages.prototype.about = function () {
+        pub.navSlide();
+        // public method
         function setTurnto() {
             var imgClickCount = 0;
             var timer;
@@ -113,6 +166,72 @@ var ExcutePages = (function () {
         }
         setTurnto();
     };
-    return ExcutePages;
+    // about page function
+    ExecutePages.prototype.login = function () {
+        pub.navSlide();
+        // public method
+        function setBtnDisable() {
+            $('.login-area label input').on('keyup mouseup touchend', function () {
+                if (!ts.ifValEmpty($('.login-area label input'))) {
+                    $('.login-btn-container .as-btn').prop('disabled', false);
+                }
+                else {
+                    $('.login-btn-container .as-btn').prop('disabled', true);
+                }
+            });
+        }
+        function loginAjax() {
+            var account;
+            var password;
+            var data;
+            $('.login-btn-container .as-btn').on('click', function () {
+                $(this).prop('disabled', true);
+                account = $('.account-label .login-account').val();
+                password = $('.password-label .login-password').val();
+                data = {
+                    account: account,
+                    password: password
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: '/login',
+                    data: data,
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log('success', result);
+                    },
+                    error: function (e) {
+                        console.log('login ajax err', e);
+                    },
+                    complete: function () {
+                        console.log('ajax complete');
+                        function setEnable() {
+                            $('.login-btn-container .as-btn').prop('disabled', false);
+                        }
+                        setTimeout(setEnable, 2000);
+                    }
+                });
+            });
+        }
+        setBtnDisable();
+        loginAjax();
+    };
+    // login page
+    ExecutePages.prototype.article = function () {
+        pub.navSlide();
+        // public method
+    };
+    // article page
+    ExecutePages.prototype.articleManage = function () {
+        pub.navSlide();
+        // public method
+    };
+    // article manage page
+    ExecutePages.prototype.start = function () {
+        pub.navSlide();
+        // public method
+    };
+    return ExecutePages;
 }());
-var exc = new ExcutePages();
+var exec = new ExecutePages();
+// event pages method

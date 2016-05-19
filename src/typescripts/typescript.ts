@@ -11,9 +11,60 @@ class GlobalMethod{
 	}
 }  
 let ts = new GlobalMethod();
+// global method
 
-class ExcutePages{
+class PublicMethod{
+	navSlide():void{
+		function naviSlide():void{
+			let itemsOperate = $('.nav .more-operate .more-oprate-items');
+			let moreIcon = $('.nav .more-operate .fa-ellipsis-v');
+			$('.nav .more-operate .nav-alink').on('mouseenter',function(){
+				itemsOperate.slideDown('fast');
+				console.log(moreIcon);
+				moreIcon.css({
+					'transform': 'scale(1.5) rotate(90deg)'
+				});
+			}); 
+			$('.nav .more-operate').on('mouseleave',function(){
+				itemsOperate.slideUp('fast');
+				moreIcon.css({
+					'transform': 'rotate(0deg)'
+				});
+			}); 
+		}
+		function logout(jqdom:JQuery):void{
+			jqdom.on('click',function(){
+				$.ajax({
+					type: 'POST',
+					url:'/logout',
+					data: {info:'logout'},
+					dataType: 'json',
+					success: function(result){
+						console.log('success logout',result);
+						window.location.href="/login";
+					},
+					error: function(e){
+						console.log('logout ajax err',e);
+					},
+					complete: function(){
+						console.log('logout complete');
+					}
+				})
+			});
+		}
+		naviSlide();
+		logout($('.nav .nav-ul .more-operate .log-out'));
+	}
+	// navigation items with toggle slide animate
+}
+let pub = new PublicMethod();
+// public method
+
+class ExecutePages{
 	edit():void{
+		pub.navSlide();
+		// public method
+		
 		function setBtnDisable():void{
 			$('.edit-input').on('keyup mouseup touchend',function(){
 				console.log(ts.ifValEmpty($('.edit-input')));
@@ -88,6 +139,9 @@ class ExcutePages{
 	// edit page function
 	
 	about():void{
+		pub.navSlide();
+		// public method
+		
 		function setTurnto():void{
 			let imgClickCount:number = 0;
 			let timer:number;
@@ -112,5 +166,75 @@ class ExcutePages{
 		setTurnto();
 	}
 	// about page function
+
+	login():void{
+		pub.navSlide();
+		// public method
+		
+		function setBtnDisable():void{
+			$('.login-area label input').on('keyup mouseup touchend',function(){
+				if(!ts.ifValEmpty($('.login-area label input'))){
+					$('.login-btn-container .as-btn').prop('disabled',false);
+				}else{
+					$('.login-btn-container .as-btn').prop('disabled',true);
+				}
+			})
+		} 
+		function loginAjax():void{
+			let account: string;
+			let password: string;
+			let data: Object;
+			$('.login-btn-container .as-btn').on('click',function(){
+				$(this).prop('disabled',true);
+				account = $('.account-label .login-account').val();
+				password = $('.password-label .login-password').val();
+				data = {
+					account: account,
+					password: password
+				};
+				$.ajax({
+					type: 'POST',
+					url:'/login',
+					data: data,
+					dataType: 'json',
+					success: function(result){
+						console.log('success',result)
+					},
+					error: function(e){
+						console.log('login ajax err',e)
+					},
+					complete: function(){
+						console.log('ajax complete');
+						function setEnable():void{
+							$('.login-btn-container .as-btn').prop('disabled',false);
+						}
+						setTimeout(setEnable,2000);
+					}
+				})
+			})
+		}
+		setBtnDisable();
+		loginAjax();
+	}	
+	// login page
+	
+	article():void{
+		pub.navSlide();
+		// public method
+	}
+	// article page
+	
+	articleManage():void{
+		pub.navSlide();
+		// public method
+	}
+	// article manage page
+	
+	start():void{
+		pub.navSlide();
+		// public method
+	}
+	// start page
 }
-let exc = new ExcutePages();
+let exec = new ExecutePages();
+// event pages method

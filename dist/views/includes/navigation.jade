@@ -1,11 +1,26 @@
 mixin navi(listIndex)
 	nav.nav
-		ul.nav-ul
-			-var listName = {'首页':'/','编辑':'/edit','关于':'/about','more':'/more'};
-			each val,index in listName
-				if (index===listIndex)
-					li.nav-items
-						a(href="#{val}").actived #{index}
-				else
-					li.nav-items
-						a(href="#{val}") #{index}
+		.nav-blocks-container
+			.symbol-icon
+				.icon-container coollam
+					
+			ul.nav-ul
+				-var listName = cookieUsername? {'/':'首页','/article-manage':'管理','javascript: null':cookieUsername}:{'/':'首页','/article-manage':'管理','/login':'登陆'}
+				each val,index in listName
+					if (val === listIndex)
+						li.nav-items
+							a.nav-alink(href="#{index}").actived #{val}
+					else
+						li.nav-items
+							a.nav-alink(href="#{index}") #{val}
+				li.more-operate.nav-items
+					a.nav-alink
+						span.fa.fa-ellipsis-v
+					ul.more-oprate-items
+						li.more-list
+							a(href="/about") 关于
+						if (cookieUsername)
+							li.more-list
+								a.log-out 退出
+
+								

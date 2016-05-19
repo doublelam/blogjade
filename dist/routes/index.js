@@ -1,35 +1,18 @@
 
 var articles = require('../models/articles');
 var mrked = require('marked');
+var cookieParser = require('cookie-parser');
 var routes = function(app){
 	/* GET start page. */
 	app.get('/', function(req, res, next) {
-		articles.articleModel.find(
+		articles.articleModel.find({}).sort({_id:-1}).exec(
 			function(error, result){
 				if(error){
 					console.log('error',error);
 					res.send('error'+error);
 				}else{
-					var titles = new Array();
-					var times = new Array();
-					var preVs = new Array();
-					var oTitles = new Array();
-
-					for(var i = 0;i < result.length;i ++){
-						titles.push(result[i].tTitle?result[i].tTitle:'null');
-						oTitles.push(result[i].oTitle?result[i].oTitle:'null');
-						times.push(result[i].tTime?result[i].tTime:'null');
-						preVs.push(result[i].tContent?result[i].tContent.substring(0,50):'null');
-						console.log(titles);
-					};
-					var newRslt = {
-						titles: titles,
-						oTitles: oTitles,
-						times: times,
-						preVs: preVs,
-					};
-					
-					res.render('start',{title:'start',result: newRslt});
+					var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+					res.render('start',{title:'start',result: result,cookieUsername:cookieUsername});
 				}
 			}
 		);
@@ -51,8 +34,8 @@ var routes = function(app){
 						err.status = 404;
 						next(err);
 					}else{
-
-						res.render('article',{title:'start',result: result,mrked:mrked});
+						var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+						res.render('article',{title:'start',result: result,mrked:mrked,cookieUsername:cookieUsername});
 					}
 				}
 			}
@@ -61,46 +44,75 @@ var routes = function(app){
 	
 	/* GET edit page */
 	app.get('/edit',function(req, res, next){
-		res.render('edit',{title:'edit'});
+		if(req.signedCookies.username){
+			var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+			res.render('edit',{title:'edit',cookieUsername:cookieUsername});
+		}else{
+			console.log('get cookie',req.signedCookies);
+			res.redirect('/login');
+		}
 	});
 	
 	/* GET about page */
 	app.get('/about',function(req, res, next){
-		res.render('about',{title:'about'})
+		var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+		res.render('about',{title:'about',cookieUsername:cookieUsername})
 	});
 	
 	/* GET article manage page */
 	app.get('/article-manage',function(req, res, next){
-		articles.articleModel.find(
-			function(error, result){
-				if(error){
-					console.log('error',error);
-					res.send('error'+error);
+		if(req.signedCookies.username){
+			articles.articleModel.find({}).sort({_id:-1}).exec(
+				function(error, result){
+					if(error){
+						console.log('error',error);
+						res.send('error'+error);
+					}else{
+						var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+						res.render('articlemanage',{title:'start',result: result,cookieUsername:cookieUsername});
+					}
+				}
+			);
+		}else{
+			res.redirect('/login')
+		}
+		
+	}); 
+	
+	/* GET login page */
+	app.get('/login',function(req, res, next){
+		var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+		res.render('login',{title:'Administrator login',cookieUsername:cookieUsername});
+	});
+	
+	/* post login and set cookie*/
+	app.post('/login',function(req, res, next){
+		var rslt = req.body;
+		var account = rslt.account;
+		var password = rslt.password;
+		articles.accountModel.findOne({account:account},function(error,result){
+			console.log(result);
+			if(error||result === null){
+				res.send({info: 'wrong account'});
+				console.log('login find err');
+			}else{
+				if(result.password === password){
+					console.log('password correct');
+					res.cookie('username', account, {maxAge: 600000,httpOnly: true,signed:true});
+					res.send({info: 'login success'});
 				}else{
-					var titles = new Array();
-					var times = new Array();
-					var preVs = new Array();
-					var oTitles = new Array();
-
-					for(var i = 0;i < result.length;i ++){
-						titles.push(result[i].tTitle?result[i].tTitle:'null');
-						oTitles.push(result[i].oTitle?result[i].oTitle:'null');
-						times.push(result[i].tTime?result[i].tTime:'null');
-						preVs.push(result[i].tContent?result[i].tContent.substring(0,50):'null');
-						console.log(titles);
-					};
-					var newRslt = {
-						titles: titles,
-						oTitles: oTitles,
-						times: times,
-						preVs: preVs,
-					};
-					
-					res.render('articlemanage',{title:'start',result: newRslt});
+					console.log('incorrect password');
+					res.send({info: 'incorrect password'});
 				}
 			}
-		);
-	}); 
+		});
+	});
+	
+	/* post logout and clear cookie*/
+	app.post('/logout',function(req, res, next){
+		res.clearCookie('username');
+		res.send({info:'cookieUsername cleared'});
+	});
 	
 	/* post editupload */
 	app.post('/editupload',function(req, res, next){
@@ -109,11 +121,10 @@ var routes = function(app){
 		articles.db.collection('test').insert(newData);
 		res.send(req.body);
 		console.log(req.body);
-		
 	});
 };
 
 module.exports = routes;
 process.on('uncaughtException',function(e){
-	console.log('process error: ',e)
+	console.log('nodeServerProcessError: ',e)
 })

@@ -17,6 +17,11 @@ db.once('open',function(){
 		oTime: Date,
 		oContent: String
 	});
+	AdministratorSchema = new mongoose.Schema({
+		account: String,
+		password: String
+	});
+	exports.accountModel = accountModel = db.model('administrator',AdministratorSchema,'administrator')
 	exports.articleModel = articleModel = db.model('test',ArticleSchema,'test');
 	// var tt = new articleModel({
 	// 	title: 'tttt',

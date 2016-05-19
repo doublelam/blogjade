@@ -24,7 +24,7 @@ app.set('env','production');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser('Lam secret'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 使用统一index文件路由
