@@ -14,7 +14,7 @@ db.once('open',function(){
 		tContent:String,
 		oTitle: String,
 		oAuthor: String,
-		oTime: Date,
+		oTime: {type:Date,default:Date.now},
 		oContent: String
 	});
 	AdministratorSchema = new mongoose.Schema({

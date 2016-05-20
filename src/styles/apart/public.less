@@ -108,18 +108,31 @@ body{
 	border: none;
 	outline: none;
 }
+.nav-more-rotate{
+	transform: rotate(90deg) scale(1.6);
+	text-shadow: @shdwCls1; 
+}
 
 .as-btn:hover,.as-btn:active,button:hover,button:active{
-	background-color: darken(@aHovered,10%)
+	background-color: darken(@aHovered,10%);
+	color: #fff;
 }
 .as-btn.btn-warn,button.btn-warn{
-	background-color: @warnColor; 
+	background-color: @warnColor;
+	color: #fff;
 }
 .as-btn.btn-warn:hover,.as-btn.btn-warn:active,button.btn-warn:hover,button.btn-warn:active{
 	background-color: darken(@warnColor,10%);
+	color: #fff;
 }
 
 .as-btn[disabled],button[disabled]{
+	pointer-events: none;
 	background-color: lighten(@forthColor,28%);
 	color: @forthColor;
+}
+
+.input-err-hint{
+	color: @warnColor;
+	border-color: @warnColor;
 }

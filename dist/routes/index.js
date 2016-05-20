@@ -2,7 +2,7 @@
 var articles = require('../models/articles');
 var mrked = require('marked');
 var cookieParser = require('cookie-parser');
-var routes = function(app){
+var routes = function(app) {
 	/* GET start page. */
 	app.get('/', function(req, res, next) {
 		articles.articleModel.find({}).sort({_id:-1}).exec(
@@ -43,10 +43,11 @@ var routes = function(app){
 	});
 	
 	/* GET edit page */
-	app.get('/edit',function(req, res, next){
+	app.get('/edit',function(req, res, next) {
+		var articleId = req.query.articleid?req.query.articleid:null;
 		if(req.signedCookies.username){
 			var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
-			res.render('edit',{title:'edit',cookieUsername:cookieUsername});
+			res.render('edit',{title:'edit',cookieUsername:cookieUsername,articleId:articleId});
 		}else{
 			console.log('get cookie',req.signedCookies);
 			res.redirect('/login');
@@ -54,13 +55,13 @@ var routes = function(app){
 	});
 	
 	/* GET about page */
-	app.get('/about',function(req, res, next){
+	app.get('/about',function(req, res, next) {
 		var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
 		res.render('about',{title:'about',cookieUsername:cookieUsername})
 	});
 	
 	/* GET article manage page */
-	app.get('/article-manage',function(req, res, next){
+	app.get('/article-manage',function(req, res, next) {
 		if(req.signedCookies.username){
 			articles.articleModel.find({}).sort({_id:-1}).exec(
 				function(error, result){
@@ -80,13 +81,13 @@ var routes = function(app){
 	}); 
 	
 	/* GET login page */
-	app.get('/login',function(req, res, next){
+	app.get('/login',function(req, res, next) {
 		var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
 		res.render('login',{title:'Administrator login',cookieUsername:cookieUsername});
 	});
 	
 	/* post login and set cookie*/
-	app.post('/login',function(req, res, next){
+	app.post('/login',function(req, res, next) {
 		var rslt = req.body;
 		var account = rslt.account;
 		var password = rslt.password;
@@ -109,22 +110,63 @@ var routes = function(app){
 	});
 	
 	/* post logout and clear cookie*/
-	app.post('/logout',function(req, res, next){
+	app.post('/logout',function(req, res, next) {
 		res.clearCookie('username');
 		res.send({info:'cookieUsername cleared'});
 	});
 	
 	/* post editupload */
-	app.post('/editupload',function(req, res, next){
+	app.post('/editupload',function(req, res, next) {
+		var newData = JSON.parse(JSON.stringify(req.body));
+		var mainData = JSON.parse(newData.data);
+		console.log(newData.id);
+		if(newData.id){
+			articles.articleModel.update({_id:newData.id},{$set:mainData},{upsert:true},function(err){
+				if(err){
+					res.send({info:'update err:'+err});
+				}else{
+					res.send({info:'update success'});
+				}
+			})
+		}else{
+			articles.db.collection('test').insert(mainData,function(err){
+				if(err){
+					res.send({info:'create err:'+err});
+				}else{
+					res.send({info:'creat success'});
+				}
+			})
+		}
+		
+	});
+	
+	/* post article remove */
+	app.post('/article-remove',function(req, res, next) {
 		console.log(req.body);
-		var newData = req.body;
-		articles.db.collection('test').insert(newData);
-		res.send(req.body);
-		console.log(req.body);
+		var article = req.body;
+		articles.articleModel.remove({_id:article.articleId},function(err){
+			if(err){
+				res.send({info:'delete error'});
+			}else{
+				res.send({info:'delete success'});
+			}
+		})
+	});
+	
+	/* post get article by id */
+	app.post('/get-article-content',function(req, res, next){
+		var articleId = req.body.id;
+		articles.articleModel.findOne({_id:articleId},function(err,result){
+			if(err){
+				res.send({info: 'get by id err'});
+			}else{
+				res.send({info: 'get success',result:result})
+			};
+		});
 	});
 };
 
 module.exports = routes;
 process.on('uncaughtException',function(e){
 	console.log('nodeServerProcessError: ',e)
-})
+});

@@ -1,7 +1,7 @@
 /// <reference path="jquery.d.ts" />
 
-class GlobalMethod{
-	ifValEmpty(jdomInput:JQuery){
+class GlobalMethods{
+	ifValEmpty(jdomInput:JQuery):boolean{
 		for(let i = 0;i < jdomInput.length; i++){
 			if (jdomInput.eq(i).val() === '' ){
 				return true;
@@ -9,11 +9,28 @@ class GlobalMethod{
 		}
 		return false; 
 	}
+	hintErrInpt(jdomInput:JQuery):JQuery{
+		jdomInput.addClass('input-err-hint');
+		return jdomInput;
+	}
+	enterPressFakeClick(jqdom:JQuery,jqdomTarget:JQuery):JQuery{
+		jqdom.on('keypress',function(e:JQueryEventObject){
+			if(e.keyCode === 13 && !jqdomTarget.prop('disabled')){
+				jqdomTarget.trigger('click');
+			}
+		});
+		return jqdom;
+	}
+	getUrlParam(name:string):string{
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+		var r = window.location.search.substr(1).match(reg);
+		return r !== null? decodeURI(r[2]):  null;
+	}
 }  
-let ts = new GlobalMethod();
+let glb = new GlobalMethods();
 // global method
 
-class PublicMethod{
+class PublicMethods{
 	navSlide():void{
 		function naviSlide():void{
 			let itemsOperate = $('.nav .more-operate .more-oprate-items');
@@ -21,15 +38,11 @@ class PublicMethod{
 			$('.nav .more-operate .nav-alink').on('mouseenter',function(){
 				itemsOperate.slideDown('fast');
 				console.log(moreIcon);
-				moreIcon.css({
-					'transform': 'scale(1.5) rotate(90deg)'
-				});
+				moreIcon.addClass('nav-more-rotate');
 			}); 
 			$('.nav .more-operate').on('mouseleave',function(){
 				itemsOperate.slideUp('fast');
-				moreIcon.css({
-					'transform': 'rotate(0deg)'
-				});
+				moreIcon.removeClass('nav-more-rotate');
 			}); 
 		}
 		function logout(jqdom:JQuery):void{
@@ -57,24 +70,53 @@ class PublicMethod{
 	}
 	// navigation items with toggle slide animate
 }
-let pub = new PublicMethod();
+let pub = new PublicMethods();
 // public method
 
 class ExecutePages{
 	edit():void{
-		pub.navSlide();
-		// public method
-		
+		var articleId = glb.getUrlParam('articleid');
 		function setBtnDisable():void{
 			$('.edit-input').on('keyup mouseup touchend',function(){
-				console.log(ts.ifValEmpty($('.edit-input')));
-				if(!ts.ifValEmpty($('.edit-input'))){
+				console.log(glb.ifValEmpty($('.edit-input')));
+				if(!glb.ifValEmpty($('.edit-input'))){
 					$('.button-block .as-btn').prop('disabled',false);
 				}else{
 					$('.button-block .as-btn').prop('disabled',true);
 				}
 			})
-		} 
+		}
+		function ajaxGetContent():void{	
+			$.ajax({
+					type: 'POST',
+					url:'/get-article-content',
+					data: {id:articleId},
+					dataType: 'json',
+					success: function(result){
+						if(result.info === 'get success'){
+							console.log(result.result);
+							$('.origin-title .edit-input').val(result.result.oTitle);
+							$('.origin-author .edit-input').val(result.result.oAuthor);
+							$('.origin-time .edit-input').val(result.result.oTime.split('T')[0]);
+							$('.origin-cover .edit-input').val(result.result.oCoverPic);
+							$('.origin-content .edit-input').val(result.result.oContent);
+							$('.trans-title .edit-input').val(result.result.tTitle);
+							$('.trans-author .edit-input').val(result.result.tAuthor);
+							$('.trans-time .edit-input').val(result.result.tTime.split('T')[0]);
+							$('.trans-cover .edit-input').val(result.result.tCoverPic);
+							$('.trans-content .edit-input').val(result.result.tContent);
+						}else{
+							alert('发生了错误 Σ(;ﾟдﾟ)');
+						}
+					},
+					error: function(e){
+						console.log('ajax err',e);
+					},
+					complete: function(){
+						console.log('ajax complete');
+					}
+				}); 
+		}
 		function ajaxSbmit():void{ 
 			var origTitle: string;
 			var origAuthor: string;
@@ -111,10 +153,13 @@ class ExecutePages{
 					tCoverPic: trsCoverPic,
 					tContent: trsContent
 				}
+				var upData:string =JSON.stringify(data);
+				var articleId:string = $(this).attr('updatefor');
+				console.log(upData);
 				$.ajax({
 					type: 'POST',
 					url:'/editupload',
-					data: data,
+					data: {data:upData,id:articleId},
 					dataType: 'json',
 					success: function(result){
 						console.log('success',result)
@@ -133,8 +178,11 @@ class ExecutePages{
 				
 			})
 		}
-		setBtnDisable()
-		ajaxSbmit()	
+		setBtnDisable();
+		ajaxSbmit();
+		pub.navSlide();
+		articleId?ajaxGetContent():null;
+		// public method
 	}
 	// edit page function
 	
@@ -170,21 +218,29 @@ class ExecutePages{
 	login():void{
 		pub.navSlide();
 		// public method
-		
+		function fakeClickWhenEnter(){
+			glb.enterPressFakeClick($('body'),$('.login-btn-container .as-btn'));
+		}
 		function setBtnDisable():void{
-			$('.login-area label input').on('keyup mouseup touchend',function(){
-				if(!ts.ifValEmpty($('.login-area label input'))){
+			function setBtnIfShow():void{
+				if(!glb.ifValEmpty($('.login-area label input'))){
 					$('.login-btn-container .as-btn').prop('disabled',false);
 				}else{
 					$('.login-btn-container .as-btn').prop('disabled',true);
 				}
+			}
+			$('.login-area label input').on('keyup mouseup touchend',function(){
+				$(this).removeClass('input-err-hint');
+				setBtnIfShow();
 			})
+			setBtnIfShow();
 		} 
 		function loginAjax():void{
 			let account: string;
 			let password: string;
 			let data: Object;
 			$('.login-btn-container .as-btn').on('click',function(){
+				$('.login-area label input').blur();
 				$(this).prop('disabled',true);
 				account = $('.account-label .login-account').val();
 				password = $('.password-label .login-password').val();
@@ -198,7 +254,14 @@ class ExecutePages{
 					data: data,
 					dataType: 'json',
 					success: function(result){
-						console.log('success',result)
+						console.log('success',result);
+						if(result.info === 'wrong account'){
+							glb.hintErrInpt($('.login-area .input-container .account-label .login-account'));
+						}else if(result.info === 'incorrect password'){
+							glb.hintErrInpt($('.login-area .input-container .password-label .login-password'));
+						}else if(result.info === 'login success'){
+							window.location.href = '/article-manage';
+						}
 					},
 					error: function(e){
 						console.log('login ajax err',e)
@@ -215,7 +278,8 @@ class ExecutePages{
 		}
 		setBtnDisable();
 		loginAjax();
-	}	
+		fakeClickWhenEnter();
+	}
 	// login page
 	
 	article():void{
@@ -225,6 +289,38 @@ class ExecutePages{
 	// article page
 	
 	articleManage():void{
+		function slideUpDom(jqdom:JQuery){
+			jqdom.slideUp('fast',function(){
+				jqdom.remove();
+			});
+		}
+		function articleDelete():void{
+			var deleteBtn = $('.article-content .manage-btns .btn-delete');
+			deleteBtn.on('click',function(){
+				let thisContainer = $(this).parents('.article-display');
+				let articleId = $(this).parents('.article-content').attr('article_id');
+				$.ajax({
+					type: 'POST',
+					url:'/article-remove',
+					data: {articleId: articleId},
+					dataType: 'json',
+					success: function(result){
+						console.log('success',result);
+						if(result.info === 'delete error'){
+							alert('出错啦 (⊙⊙！) ');
+						}else if(result.info === 'delete success'){
+							slideUpDom(thisContainer);
+						}
+					},
+					error: function(e){
+						console.log('delete ajax err',e)
+					},
+					complete: function(){
+					}
+				});
+			});
+		}
+		articleDelete();
 		pub.navSlide();
 		// public method
 	}

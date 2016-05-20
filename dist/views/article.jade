@@ -17,7 +17,7 @@ block content
 				div.main-inside
 					article.main-article
 						h1.main-title  #{tTitle}
-						h3.subtitle author:#{tAuthor} #{tTime}
+						h3.subtitle author:#{tAuthor} #{tTime.toLocaleDateString()}
 						p.main-paragraph!= mrked(tContent)
 							
 								
@@ -25,7 +25,7 @@ block content
 				div.main-inside
 					article.main-article
 						h1.main-title #{oTitle}
-						h3.subtitle author:#{oAuthor} #{oTime}
+						h3.subtitle author:#{oAuthor} #{oTime.toLocaleDateString()}
 						p.main-paragraph!= mrked(oContent)
 							
 
