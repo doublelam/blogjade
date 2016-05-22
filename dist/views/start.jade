@@ -9,7 +9,7 @@ block content
 					li.article-display 
 						a.article-content.hover-scale(href="/article?title=#{val.oTitle}")
 							div.image-container
-								img(src="images/del/nodejs.png")
+								img(src="#{val.tCoverPic}")
 							div.article-view
 								h1.article-title #{val.tTitle}	 
 								- var preVs = val.tContent.toString().substr(0,50)
