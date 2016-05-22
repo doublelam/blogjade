@@ -120,7 +120,7 @@ var routes = function(app) {
 		var newData = JSON.parse(JSON.stringify(req.body));
 		var mainData = JSON.parse(newData.data);
 		console.log(newData.id);
-		if(newData.id){
+		if(newData.id !== 'null'&&newData.id !== null){
 			articles.articleModel.update({_id:newData.id},{$set:mainData},{upsert:true},function(err){
 				if(err){
 					res.send({info:'update err:'+err});

@@ -162,10 +162,15 @@ class ExecutePages{
 					data: {data:upData,id:articleId},
 					dataType: 'json',
 					success: function(result){
-						console.log('success',result)
+						console.log('success',result);
+						if(result.info === 'creat success'){
+							alert('创建成功');
+							window.location.href='/article-manage';
+						}
 					},
 					error: function(e){
 						console.log('ajax err',e)
+						alert('创建失败 错误：'+e);
 					},
 					complete: function(){
 						console.log('ajax complete');
@@ -299,25 +304,30 @@ class ExecutePages{
 			deleteBtn.on('click',function(){
 				let thisContainer = $(this).parents('.article-display');
 				let articleId = $(this).parents('.article-content').attr('article_id');
-				$.ajax({
-					type: 'POST',
-					url:'/article-remove',
-					data: {articleId: articleId},
-					dataType: 'json',
-					success: function(result){
-						console.log('success',result);
-						if(result.info === 'delete error'){
-							alert('出错啦 (⊙⊙！) ');
-						}else if(result.info === 'delete success'){
-							slideUpDom(thisContainer);
+				if(confirm('删除后不可恢复，确定删除？')){
+					$.ajax({
+						type: 'POST',
+						url:'/article-remove',
+						data: {articleId: articleId},
+						dataType: 'json',
+						success: function(result){
+							console.log('success',result);
+							if(result.info === 'delete error'){
+								alert('出错啦 (⊙⊙！) ');
+							}else if(result.info === 'delete success'){
+								slideUpDom(thisContainer);
+							}
+						},
+						error: function(e){
+							console.log('delete ajax err',e)
+						},
+						complete: function(){
 						}
-					},
-					error: function(e){
-						console.log('delete ajax err',e)
-					},
-					complete: function(){
-					}
-				});
+					});
+				}else{
+					return false;
+				}
+				
 			});
 		}
 		articleDelete();

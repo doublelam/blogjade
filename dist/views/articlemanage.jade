@@ -11,7 +11,7 @@ block content
 					li.article-display
 						div.article-content.manage-article-content(article_id="#{val._id}")
 							div.article-view
-								h1.article-title #{val.tTitle}
+								h2.article-title #{val.tTitle}
 								- var preVs = val.tContent.toString().substr(0,50)
 									p.article-paragraph 
 										|preview: #{preVs}...
