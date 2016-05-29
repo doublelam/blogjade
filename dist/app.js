@@ -20,12 +20,12 @@ app.set('view engine', 'jade');
 app.set('env','production');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser('Lam secret'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'),{maxAge:120000}));
 
 // 使用统一index文件路由
 // app.use('/', start);
@@ -63,7 +63,9 @@ app.use(function(err, req, res, next) {
     message: 'production'+err.message,
     error: {}
   });
+  next();
 });
+
 
 
 

@@ -19,13 +19,16 @@ block content
 								a.as-btn.btn-edit(href="/edit?articleid=#{val._id}") 编辑
 								button.as-btn.btn-delete.btn-warn 删除
 		aside.aside-area
-			div.aside-inside aside area mabe dor ads
+			div.aside-inside
 				:marked
-					# markdown
-						for()
-							console.log()
-						sd
-					codeend
+					>The application deployed on **[openshift]**
+					[openshift]:https://www.openshift.com/
+					>The server created use **[node.js]**
+					[node.js]:https://nodejs.org
+					>文章管理、编辑功能限于管理员
+					
+					>你想编辑文章请联系管理员 **[whatisurname7@gmail.com]**
+					[whatisurname7@gmail.com]:mailto:whatisurname7@gmail.com
 	script(src="/javascripts/jquery.min.js" type="text/javascript")
 	script(src="/javascripts/typescript.min.js" type="text/javascript")
 	script

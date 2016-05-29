@@ -50,7 +50,8 @@ var paths = {
     images: [
         'src/images/**/*.jpg',
         'src/images/**/*.gif',
-        'src/images/**/*.png' 
+        'src/images/**/*.png',
+        'src/images/**/*.svg', 
     ],
     fonts: [
         'components/font-awesome/fonts/FontAwesome.otf',

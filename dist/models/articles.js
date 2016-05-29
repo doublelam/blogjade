@@ -3,14 +3,15 @@ var db = mongoose.connection;
 db.on('error',function(e){
 	console.log('error : ',e);
 });
-var ArticleSchema;
-var articleModel;
+var ArticleSchema,AdministratorSchema,CommentsSchema;
+var articleModel,commentsModel,accountModel;
 db.once('open',function(){
-	console.log('db opened');
+	console.log('mongodb opened');
 	ArticleSchema = new mongoose.Schema({
 		tTitle: String,
 		tAuthor: String,
 		tTime: Date,
+		coverPic:String,
 		tContent:String,
 		oTitle: String,
 		oAuthor: String,
@@ -21,8 +22,17 @@ db.once('open',function(){
 		account: String,
 		password: String
 	});
-	exports.accountModel = accountModel = db.model('administrator',AdministratorSchema,'administrator')
-	exports.articleModel = articleModel = db.model('test',ArticleSchema,'test');
+	CommentsSchema = new mongoose.Schema({
+		ipAddr: String,
+		tempName: String,
+		follwedName: String,
+		for_id: String,
+		in_id: String,
+		content: String
+	});
+	exports.accountModel = accountModel = db.model('administrator',AdministratorSchema,'administrator');
+	exports.articleModel = articleModel = db.model('articles',ArticleSchema);
+	exports.commentsModel = commentsModel = db.model('comments',CommentsSchema);
 	// var tt = new articleModel({
 	// 	title: 'tttt',
 	// 	content: 'yyyy',

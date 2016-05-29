@@ -12,6 +12,7 @@ var routes = function(app) {
 					res.send('error'+error);
 				}else{
 					var cookieUsername = req.signedCookies.username?req.signedCookies.username:null;
+					console.log(result);
 					res.render('start',{title:'start',result: result,cookieUsername:cookieUsername});
 				}
 			}
@@ -86,6 +87,27 @@ var routes = function(app) {
 		res.render('login',{title:'Administrator login',cookieUsername:cookieUsername});
 	});
 	
+	/* get the ip address */
+	app.get('/ip-address',function(req, res, next){
+		// console.log('express ip',req.ip);
+		var ipAdd = req.ip.toString().match(/\d+\.\d+\.\d+\.\d+/).toString();
+		console.log(req.headers);
+		res.send({ipAddress:ipAdd});
+	});
+	
+	/* POST comments use ajax from terminal */
+	app.post('/get-comments',function(req, res, next){
+		var query = req.body;
+		console.log(query);
+		articles.commentsModel.find(query).sort({_id:-1}).exec(function(err,result){
+			if(err){
+				res.send({info:'get comments err'+err});
+			}else{
+				res.send({info:'get comments success',data:result});
+			}
+		});
+	});
+	
 	/* post login and set cookie*/
 	app.post('/login',function(req, res, next) {
 		var rslt = req.body;
@@ -129,7 +151,7 @@ var routes = function(app) {
 				}
 			})
 		}else{
-			articles.db.collection('test').insert(mainData,function(err){
+			articles.db.collection('articles').insert(mainData,function(err){
 				if(err){
 					res.send({info:'create err:'+err});
 				}else{
@@ -162,6 +184,17 @@ var routes = function(app) {
 			}else{
 				res.send({info: 'get success',result:result})
 			};
+		});
+	});
+	
+	/* POST comments */
+	app.post('/comment-post',function(req, res, next){
+		articles.db.collection('comments').insert(req.body,function(err,data){
+			if(err){
+				res.send({info:'comment post error'+err});
+			}else{
+				res.send({info:'comment post success',id:data.insertedIds[0]});
+			}
 		});
 	});
 };

@@ -22,8 +22,10 @@ a{
 
 a:hover{
 	color: @aHovered;
-	cursor: pointer;
 	-webkit-tap-highlight-color:transparent;
+}
+a[href]:hover{
+	cursor: pointer;
 }
 .actived{
 	color: @aHovered;
@@ -71,6 +73,8 @@ code{
 }
 blockquote{
 	display: inline-block;
+	max-width: 100%;
+	margin: auto;
 	background-color: lighten(@sixthColor,20%);
 	border-radius: 2px;
 	padding: 8px;
@@ -96,4 +100,12 @@ input:focus,textarea:focus{
 textarea{
 	vertical-align: top;
 	resize: vertical;
+}
+table{
+	border-collapse: collapse;
+	border-radius: 2px;
+	th,td{
+		border: 1px solid lighten(@sixthColor,20%);
+		padding: 8px;
+	}
 }

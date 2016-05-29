@@ -2,8 +2,8 @@ mixin navi(listIndex)
 	nav.nav
 		.nav-blocks-container
 			.symbol-icon
-				.icon-container coollam
-					
+				.icon-container
+					img(class="svg-icon" src="images/content/iconbrand.svg")		
 			ul.nav-ul
 				-var listName = cookieUsername? {'/':'首页','/article-manage':'管理','javascript: null':cookieUsername}:{'/':'首页','/article-manage':'管理','/login':'登陆'}
 				each val,index in listName

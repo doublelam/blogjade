@@ -69,6 +69,60 @@ class PublicMethods{
 		logout($('.nav .nav-ul .more-operate .log-out'));
 	}
 	// navigation items with toggle slide animate
+	getPosition():void{
+		localStorage.clear();
+		if(!localStorage.getItem('tempusername')){
+			$.ajax({
+				type: 'GET',
+				url:'/ip-address',
+				dataType: 'json',
+				success: function(result){
+					console.log('ip address is ',result);
+					// 暂时设置ip
+					// result.ipAddress = '115.192.200.42';
+					$.ajax({
+						type: 'GET',
+						dataType: 'jsonp',
+						crossDomain: true,
+						url: 'http://api.map.baidu.com/location/ip?ak=papzu8GfZQdx0lAGOdi2vM29oGVyaZ6t&ip='+result.ipAddress+'&coor=bd09ll',
+						success: function(data){
+							console.log(data);
+							if(data.status === 0){
+								if(!data.content.address_detail.province){
+									console.log('地址不明');
+									localStorage.setItem('tempusername','中国网友');
+									localStorage.setItem('ipaddress',result.ipAddress);
+								}else{
+									let addr = data.content.address_detail.city?data.content.address_detail.city : data.content.address_detail.province;
+									let username = addr+'网友';
+									console.log(username);
+									localStorage.setItem('tempusername',username);
+									localStorage.setItem('ipaddress',result.ipAddress);
+								}
+							}else{
+								console.log('地址不明');
+								localStorage.setItem('tempusername','墙外网友');
+								localStorage.setItem('ipaddress',result.ipAddress);
+							}	
+						},
+						error: function(e){
+							console.log('err when getting from baidu ip api 从百度api获取地理位置时发生错误:',e);
+						},
+						complete: function(){
+							
+						}
+					})
+				},
+				error: function(e){
+					console.log('get ip address error 获取ip地址时发生错误：',e);
+				},
+				complete: function(){
+					
+				}
+			});
+		}			
+	}
+	// 获取地理位置通过ip
 }
 let pub = new PublicMethods();
 // public method
@@ -98,12 +152,11 @@ class ExecutePages{
 							$('.origin-title .edit-input').val(result.result.oTitle);
 							$('.origin-author .edit-input').val(result.result.oAuthor);
 							$('.origin-time .edit-input').val(result.result.oTime.split('T')[0]);
-							$('.origin-cover .edit-input').val(result.result.oCoverPic);
 							$('.origin-content .edit-input').val(result.result.oContent);
 							$('.trans-title .edit-input').val(result.result.tTitle);
 							$('.trans-author .edit-input').val(result.result.tAuthor);
 							$('.trans-time .edit-input').val(result.result.tTime.split('T')[0]);
-							$('.trans-cover .edit-input').val(result.result.tCoverPic);
+							$('.trans-cover .edit-input').val(result.result.coverPic);
 							$('.trans-content .edit-input').val(result.result.tContent);
 						}else{
 							alert('发生了错误 Σ(;ﾟдﾟ)');
@@ -131,12 +184,11 @@ class ExecutePages{
 			var data: Object;
 			$('.button-block .as-btn').on('click',function(){
 				$(this).prop('disabled',true);
-				origTitle = $('.origin-title .edit-input').val();
+				origTitle = $.trim($('.origin-title .edit-input').val());
 				origAuthor = $('.origin-author .edit-input').val();
 				origTime = $('.origin-time .edit-input').val();
-				origCoverPic = $('.origin-cover .edit-input').val();
 				origContent = $('.origin-content .edit-input').val();
-				trsTitle = $('.trans-title .edit-input').val();
+				trsTitle = $.trim($('.trans-title .edit-input').val());
 				trsAuthor = $('.trans-author .edit-input').val();
 				trsTime = $('.trans-time .edit-input').val();
 				trsCoverPic = $('.trans-cover .edit-input').val();
@@ -145,12 +197,11 @@ class ExecutePages{
 					oTitle: origTitle,
 					oAuthor: origAuthor,
 					oTime: origTime,
-					oCoverPic: origCoverPic,
 					oContent: origContent,
 					tTitle: trsTitle,
 					tAuthor: trsAuthor,
 					tTime: trsTime,
-					tCoverPic: trsCoverPic,
+					coverPic: trsCoverPic,
 					tContent: trsContent
 				}
 				var upData:string =JSON.stringify(data);
@@ -166,6 +217,11 @@ class ExecutePages{
 						if(result.info === 'creat success'){
 							alert('创建成功');
 							window.location.href='/article-manage';
+						}else if(result.info === 'update success'){
+							alert('修改成功');
+							window.location.href='/article-manage';
+						}else{
+							alert('好像哪里发生错误了 ...(｡•ˇ‸ˇ•｡) ...');
 						}
 					},
 					error: function(e){
@@ -190,7 +246,7 @@ class ExecutePages{
 		// public method
 	}
 	// edit page function
-	
+
 	about():void{
 		pub.navSlide();
 		// public method
@@ -288,8 +344,185 @@ class ExecutePages{
 	// login page
 	
 	article():void{
+		function addBtnAfterComments(jqdom:JQuery){
+			jqdom.append('<a class="fa fa-commenting reply-for-comments"></a>');
+		}
+		function setComments():void{
+			$('.comments-of-class1').on('click','.fa-commenting',function(){
+				let thisIndex = $(this);
+				thisIndex.after(`<div class="reply-area" style="display:none"><input placeholder="说点什么吧..."><button disabled="disabled">评论</button></div>`).next('.reply-area').slideDown('fast').prev('.reply-for-comments').removeClass('fa-commenting').addClass('fa-comment');
+				
+				if(thisIndex.parent('.class1-comment').attr('fold') === 'true'){
+					let inId = thisIndex.parent('.class1-comment').attr('comment-id');
+					console.log('need unfold',inId);
+					$.ajax({
+						type: 'POST',
+						url:'/get-comments',
+						data: {in_id:inId},
+						dataType: 'json',
+						success: function(result){
+							console.log('success',result);
+							if(result.info === 'get comments success'){
+								if(result.data.length > 0){	
+									thisIndex.parents('.class1-comment').append('<ul class="comments-of-class2"></ul>');
+									let commtsHtml = '';
+									for (let val of result.data){
+										commtsHtml += `<li class="class2-comment" comment-id="${val._id}" comment-name="${val.tempName}"><i class="fa fa-user"></i><span class="comment-name"><a>${val.tempName}</a>@<a>${val.followedName}:</a></span><span class="comment-content">${val.content}</span><a class="fa fa-commenting reply-for-comments"></a></li>`;
+									}
+									thisIndex.parents('.class1-comment').find('.comments-of-class2').prepend(commtsHtml);
+									thisIndex.parents('.class1-comment').attr('fold','false');
+								}
+							}else{
+								alert('好像哪里发生错误了 ...(｡•ˇ‸ˇ•｡) ...');
+							}
+						},
+						error: function(e){
+							console.log('comment article ajax err',e)
+							alert('好像发生错误了 ...(｡•ˇ‸ˇ•｡) ...'+e.responseText);
+						},
+						complete: function(){
+						}
+					});
+				}
+				// 点击时进行ajax获取对评论的回复
+			});
+			
+			$('.comments-of-class1').on('click','.fa-comment',function(){
+				$(this).next('.reply-area').slideUp('fast',function(){
+					$(this).prev('.reply-for-comments').removeClass('fa-comment').addClass('fa-commenting').next('.reply-area').remove();
+				});
+			});
+		}
+		function setCommentBtnDisable():void{
+			$('.article-comments-area').on('keyup mouseup touchend change',' .reply-area input',function(){
+				console.log(glb.ifValEmpty($(this)));
+				if(!glb.ifValEmpty($(this))){
+					$(this).next('button').prop('disabled',false);
+				}else{
+					$(this).next('button').prop('disabled',true);
+				}
+			});
+		}
+		function getComments(forId:string,inId:string,callback){
+			$.ajax({
+				type: 'POST',
+				url:'/get-comments',
+				data: {for_id:forId,in_id:inId},
+				dataType: 'json',
+				success: function(result){
+					console.log('success',result);
+					if(result.info === 'get comments success'){
+						callback(result);
+					}else{
+						alert('好像哪里发生错误了 ...(｡•ˇ‸ˇ•｡) ...');
+					}
+				},
+				error: function(e){
+					console.log('comment article ajax err',e)
+					alert('好像发生错误了 ...(｡•ˇ‸ˇ•｡) ...'+e.responseText);
+				},
+				complete: function(){
+				}
+			});
+		}
+		function postComments():void{
+			function articleReply():void{
+				$('.article-comments-area').on('click','.reply-area-for-article button',function(){
+					let thisIndex = $(this);
+					let val = thisIndex.prev('input').val();
+					let inId = thisIndex.parents('.article-comments-area').attr('article-id');
+					let forId = inId;
+					let followedName = $('.main-article .main-title').html();
+					thisIndex.prop('disabled',true);
+					let data = {content:val,in_id:inId,for_id:forId,ipAddr:localStorage.getItem('ipaddress'),followedName:followedName,tempName:localStorage.getItem('tempusername')};
+					$.ajax({
+						type: 'POST',
+						url:'/comment-post',
+						data: data,
+						dataType: 'json',
+						success: function(result){
+							console.log('success',result);
+							if(result.info === 'comment post success'){
+								$('.comments-of-class1').prepend(`<li comment-id="${result.id}"  comment-name="${data.tempName}" fold=true class="class1-comment"><i class="fa fa-user"></i><span class="comment-name"><a>${data.tempName}:</a></span><span class="comment-content">${data.content}</span><a class="fa fa-commenting reply-for-comments"></a></li>`);
+								thisIndex.prev('input').val('');
+							}else{
+								alert('好像哪里发生错误了 ...(｡•ˇ‸ˇ•｡) ...');
+							}
+						},
+						error: function(e){
+							console.log('comment article ajax err',e)
+							alert('好像发生错误了 ...(｡•ˇ‸ˇ•｡) ...'+e.responseText);
+						},
+						complete: function(){
+						}
+					})
+				});
+			}
+			function commentsReply():void{
+				$('.article-comments-area').on('click','.class1-comment .reply-area button',function(){
+					let thisIndex = $(this);
+					let val = thisIndex.prev('input').val();
+					let inId = thisIndex.parents('.class1-comment').attr('comment-id');
+					let forId = thisIndex.parent('.reply-area').parent('li').attr('comment-id');
+					let followedName = thisIndex.parent('.reply-area').parent('li').attr('comment-name');
+					let data = {content:val,followedName:followedName,in_id:inId,for_id:forId,ipAddr:localStorage.getItem('ipaddress'),tempName:localStorage.getItem('tempusername')};
+					let beFollName = thisIndex.parent('.reply-area').parent('li').attr('comment-name');
+					thisIndex.prop('disabled',true);
+					console.log(data);
+					$.ajax({
+						type: 'POST',
+						url:'/comment-post',
+						data: data,
+						dataType: 'json',
+						success: function(result){
+							console.log('success',result);
+							if(result.info === 'comment post success'){
+								thisIndex.prev('input').val('');
+								if(thisIndex.parents('.class1-comment').find('.comments-of-class2').length === 0){
+									thisIndex.parents('.class1-comment').append('<ul class="comments-of-class2"></ul>');
+								}
+								thisIndex.parents('.class1-comment').find('.comments-of-class2').prepend(`<li class="class2-comment" comment-id="${result.id}" comment-name="${data.tempName}"><i class="fa fa-user"></i><span class="comment-name"><a>${data.tempName}</a>@<a>${beFollName}:</a></span><span class="comment-content">${data.content}</span><a class="fa fa-commenting reply-for-comments"></a></li>`);
+							}else{
+								alert('好像哪里发生错误了 ...(｡•ˇ‸ˇ•｡) ...');
+							}
+						},
+						error: function(e){
+							console.log('comment article ajax err',e)
+							alert('好像发生错误了 ...(｡•ˇ‸ˇ•｡) ...'+e.responseText);
+						},
+						complete: function(){
+						}
+					});
+				});
+			}
+			articleReply();
+			commentsReply();
+		}
+		function getCommentsSetting():void{
+			// when get comments in article area
+			function getCommentsInArticle():void{
+				let forId = $('.article-comments-area').attr('article-id');
+				let inId = forId;
+				getComments(forId,inId,function(rsult){
+					let commentsListInArticle = '';
+					for (let val of rsult.data){
+						commentsListInArticle += `<li class="class1-comment" comment-id="${val._id}" comment-name="${val.tempName}" fold=true><i class="fa fa-user"></i><span class="comment-name"><a>${val.tempName}:</a></span><span class="comment-content">${val.content}</span><a class="fa fa-commenting reply-for-comments"></a></li>`;
+					}
+					$('.comments-of-class1').prepend(commentsListInArticle);
+				})
+			}
+			getCommentsInArticle();
+			
+		}
+		addBtnAfterComments($('.article-comments-area .class1-comment,.article-comments-area .class2-comment'));
+		setComments();
+		setCommentBtnDisable();
+		postComments();
+		getCommentsSetting();
+		pub.getPosition();
 		pub.navSlide();
 		// public method
+		
 	}
 	// article page
 	

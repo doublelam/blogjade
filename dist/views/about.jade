@@ -5,12 +5,27 @@ block content
 	section.main
 		.about-content
 			.about-image-container
-				img(src="images/content/avator.jpg")
-				img(src="images/content/avator.jpg")
-				img(src="images/content/avator.jpg")
-				img(src="images/content/avator.jpg")
+				img(src="images/content/edit.svg")
+				img(src="images/content/comment.svg")
+				img(src="images/content/drop.svg")
+				img(src="images/content/leaf.svg")		
 		.about-describe
-			:marked
+			.bacgrd-block
+			.content-block
+				ul.describe-container
+					li.describe-item
+						.img-container.coollam-icon
+							img(src="images/content/iconbrand.svg")
+						p.describe-content 文章的翻译，你也可以发布文章
+					li.describe-item
+						.img-container.nodejs-icon
+							img(src="images/content/nodejsicon.png")
+						p.describe-content 部署在使用Node.js服务器上
+					li.describe-item
+						.img-container.mongodb-icon
+							img(src="images/content/mongodbicon.png")
+						p.describe-content 使用Mongodb数据库
+					
 				
 	script(src='javascripts/jquery.min.js' type='text/javascript')
 	script(src='javascripts/typescript.min.js' type='text/javascript')

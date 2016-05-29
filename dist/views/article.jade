@@ -3,34 +3,37 @@ block content
 	include ./includes/navigation.jade
 	+navi('首页')
 	section.main
-		div.master-body
-			- var tTitle = (result.tTitle?result.tTitle:'No content')
-			- var tAuthor = (result.tAuthor?result.tAuthor:'No content')
-			- var tTime = (result.tTime?result.tTime:'No content')
-			//- - var tCoverPic = result.tCoverPic?result.tCoverPic:'No content'
-			- var tContent = (result.tContent?result.tContent:'No content')
-			- var oTitle = (result.oTitle?result.oTitle:'No content')
-			- var oAuthor = (result.oAuthor?result.oAuthor:'No content')
-			- var oTime = (result.oTime?result.oTime:'No content')
-			//- - var oCoverPic = result.oCoverPic?result.oCoverPic:'No content' 
-			- var oContent = (result.oContent?result.oContent:'No content')
-				div.main-inside
-					article.main-article
-						h1.main-title  #{tTitle}
-						h3.subtitle author:#{tAuthor} #{tTime.toLocaleDateString()}
-						p.main-paragraph!= mrked(tContent)
-							
+		.master-body
+			.main-inside
+				article.main-article
+					h1.main-title  #{result.tTitle}
+					h3.subtitle author:#{result.tAuthor} #{result.tTime.toLocaleDateString()}
+					.main-paragraph!= mrked(result.tContent)
+			.main-inside
+				article.main-article
+					h1.main-title #{result.oTitle}
+					h3.subtitle author:#{result.oAuthor} #{result.oTime.toLocaleDateString()}
+					.main-paragraph!= mrked(result.oContent)
+			.article-comments-area.main-inside(article-id="#{result._id}")
+				ul.comments-of-class1
+				.reply-area-for-article.reply-area
+					input(placeholder="说点什么吧...")
+					button(disabled="disabled") 评论
 								
-
-				div.main-inside
-					article.main-article
-						h1.main-title #{oTitle}
-						h3.subtitle author:#{oAuthor} #{oTime.toLocaleDateString()}
-						p.main-paragraph!= mrked(oContent)
+						
 							
 
 		aside.aside-area
-			div.aside-inside aside area mabe dor ads
+			div.aside-inside
+				:marked
+					>The application deployed on **[openshift]**
+					[openshift]:https://www.openshift.com/
+					>The server created use **[node.js]**
+					[node.js]:https://nodejs.org
+					>文章管理、编辑功能限于管理员
+					
+					>你想编辑文章请联系管理员 **[whatisurname7@gmail.com]**
+					[whatisurname7@gmail.com]:mailto:whatisurname7@gmail.com
 			
 	script(src='javascripts/jquery.min.js' type='text/javascript')
 	script(src='javascripts/typescript.min.js' type='text/javascript')
