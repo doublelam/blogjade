@@ -1,10 +1,14 @@
 #README.md
-create by lam
+node.js,express自动化
 
-gulp project for jade nodejs
+node.js 工程文件在dist文件夹
 
-will compile the typescript file into js fold to be a javascript file
+	cd dist/bin
+	node www
+启动nodejs文件
+目前监听端口为3032
 
-#new test test
+*在执行前请确保依赖包安装*
 
-this sentens extinct that it worked
+
+
